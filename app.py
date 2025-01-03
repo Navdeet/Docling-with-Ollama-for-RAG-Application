@@ -36,3 +36,70 @@ def show_pdf_preview(uploaded_file):
         first_page = pdf.pages[0]
         text = first_page.extract_text()
         st.write(text)
+with st.sidebar:
+    st.header("Add your documents!")
+
+    uploaded_file = st.file_uploader("Select `.pdf` file", type=["pdf"])
+
+    if uploaded_file:
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                saved_file_path = os.path.join(temp_dir, uploaded_file.name)
+
+                with open(saved_file_path, "wb") as file:
+                    file.write(uploaded_file.getvalue())
+
+                document_key = f"{user_session_id}-{uploaded_file.name}"
+                st.write("Indexing PDF document...")
+
+                if document_key not in st.session_state.get('doc_cache', {}):
+                    if os.path.exists(temp_dir):
+                        reader = DoclingReader()
+                        directory_loader = SimpleDirectoryReader(
+                            input_dir=temp_dir,
+                            file_extractor={".pdf": reader},
+                        )
+                    else:
+                        st.error('Unable to find the uploaded file, please check again...')
+                        st.stop()
+
+                    documents = directory_loader.load_data()
+
+                    loaded_llm = initialize_llm()
+                    embedding_model = HuggingFaceEmbedding(model_name="BAAI/bge-large-en-v1.5", trust_remote_code=True)
+
+                    Settings.embed_model = embedding_model
+                    markdown_parser = MarkdownNodeParser()
+                    index = VectorStoreIndex.from_documents(
+                        documents=documents,
+                        transformations=[markdown_parser],
+                        show_progress=True
+                    )
+
+                    Settings.llm = loaded_llm
+                    query_engine = index.as_query_engine(streaming=True)
+
+                    custom_qa_prompt = (
+                        "Context information is below.\n"
+                        "---------------------\n"
+                        "{context_str}\n"
+                        "---------------------\n"
+                        "Given the context information above I want you to think step by step to answer the query in a highly precise and crisp manner focused on the final answer, in case you don't know the answer say 'I don't know!'.\n"
+                        "Query: {query_str}\n"
+                        "Answer: "
+                    )
+                    prompt_template = PromptTemplate(custom_qa_prompt)
+
+                    query_engine.update_prompts({"response_synthesizer:text_qa_template": prompt_template})
+
+                    st.session_state.doc_cache[document_key] = query_engine
+                else:
+                    query_engine = st.session_state.doc_cache[document_key]
+
+                st.success("Let's Chat Now!")
+                show_pdf_preview(uploaded_file)
+        except Exception as error:
+            st.error(f"An error occurred: {error}")
+            st.stop()
+
+column1, column2 = st.columns([6, 1])
