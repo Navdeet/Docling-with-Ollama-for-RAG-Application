@@ -103,3 +103,36 @@ with st.sidebar:
             st.stop()
 
 column1, column2 = st.columns([6, 1])
+
+with column1:
+    st.header("Docling with Ollama")
+
+with column2:
+    st.button("Clear ↺", on_click=clear_chat_history)
+
+if "chat_messages" not in st.session_state:
+    clear_chat_history()
+
+for message in st.session_state.chat_messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+if user_input := st.chat_input("Hi There?"):
+    st.session_state.chat_messages.append({"role": "user", "content": user_input})
+
+    with st.chat_message("user"):
+        st.markdown(user_input)
+
+    with st.chat_message("assistant"):
+        message_display = st.empty()
+        response_accum = ""
+
+        streaming_response = query_engine.query(user_input)
+
+        for part in streaming_response.response_gen:
+            response_accum += part
+            message_display.markdown(response_accum + "▌")
+
+        message_display.markdown(response_accum)
+
+    st.session_state.chat_messages.append({"role": "assistant", "content": response_accum})
