@@ -11,3 +11,52 @@ Before you begin, ensure you have met the following requirements:
 - **Virtual Environment**: It's recommended to use a virtual environment to manage dependencies. I prefer Conda.
 - **Ollama**: Make sure Ollama is installed and llama3.2 model is downloaded with ollama pull llama3.2 command
 
+## Installation
+
+To install **Docling With Ollama**, follow these steps:
+
+1. **Clone the repo**:
+
+    ```bash
+    git clone https://github.com/Navdeet/Docling-with-Ollama-for-RAG-Application
+    ```
+
+2. **Navigate to the project directory**:
+
+    ```bash
+    cd doclingwithollama
+    ```
+
+3. **Create a virtual environment** (recommended):
+
+    Use Conda: (recommended)
+    ```bash
+      conda create -n ai python=3.11 -y && conda activate ai
+    ```
+    Or Use Python VENV:
+    ```bash
+    python3 -m venv myenv
+    source myenv/bin/activate  # On Windows use `myenv\Scripts\activate`
+    ```
+
+5. **Install the dependencies**:
+
+    ```bash
+    pip install torch 
+    pip install git+https://github.com/huggingface/transformers
+    
+    pip install llama-index-core llama-index-readers-docling llama-index-node-parser-docling llama-index-readers-file python-dotenv llama-index-llms-ollama llama-index-embeddings-huggingface llama-index-llms-huggingface-api
+    
+    pip install pdfplumber numpy streamlit 
+
+    ```
+
+## Running the Tool
+
+To run **Docling with Ollama**, execute the following command:
+
+```bash
+streamlit run app.py
+```
+
+Open your browser and go to `http://localhost:8501` to see the tool in action, if it doesnt open automatically.
