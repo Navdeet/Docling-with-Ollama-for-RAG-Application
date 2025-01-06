@@ -60,3 +60,11 @@ streamlit run app.py
 ```
 
 Open your browser and go to `http://localhost:8501` to see the tool in action, if it doesnt open automatically.
+
+
+## Usage
+From left panel, upload your local PDF file, and start chatting with them.
+
+![image](https://github.com/user-attachments/assets/cb6eaa41-125f-4a52-b351-1c3bf6f22b7f)
+
+
