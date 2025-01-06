@@ -63,8 +63,9 @@ Open your browser and go to `http://localhost:8501` to see the tool in action, i
 
 
 ## Usage
-From left panel, upload your local PDF file, and start chatting with them.
+From the left panel, upload your local PDF file, and start chatting with them. In my case, I uploaded a PDF related to docking documentation.
 
-![image](https://github.com/user-attachments/assets/cb6eaa41-125f-4a52-b351-1c3bf6f22b7f)
+![image](https://github.com/user-attachments/assets/5ce7471d-9ebd-49d5-b47a-16ceafb4337e)
+
 
 
